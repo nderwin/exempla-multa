@@ -1,2 +1,22 @@
 = Multiple Examples
 
+== Setup
+
+The `docker` folder contains a `docker-compose.yml` file that is used to stand up various dependencies that the
+applications will need, such as a database, a message queue, etc.  Execute
+
+```
+docker compose up
+```
+
+in this directory before starting any of the other applications.
+
+=== Java Setup
+
+Java 8 is required for the `telemetry-with-javaee` project.  Java 21 is the minimum for other projects.
+
+== Telemetry
+
+The `telemetry-with-quarkus` and `telemetry-with-javaee` projects demonstrate how Telemetry can be used to show the flow
+of data from one application, through a message broker, to another application.  The traces and spans that are generated
+can illustrate what code is being called at what point in the lifecycle of an application function.
