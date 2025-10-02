@@ -1,0 +1,6 @@
+extends: default
+page:
+    layout: portrait
+    margin: [1.0in, 1.0in, 1.0in, 1.0in]
+    size: Letter
+    numbering-start-at: body
