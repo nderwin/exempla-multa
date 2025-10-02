@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.github.nderwin</groupId>
+    <artifactId>exempla-multa</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Multiple Examples</name>
+    
+    <inceptionYear>2025</inceptionYear>
+    
+    <organization>
+        <name>Nathan Erwin</name>
+        <url>https://github.com/nderwin</url>
+    </organization>
+    
+    <developers>
+        <developer>
+            <id>nderwin</id>
+            <name>Nathan Erwin</name>
+            <url>https://github.com/nderwin</url>
+        </developer>
+    </developers>
+    
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    
+    <scm>
+        <url>https://github.com/nderwin/exempla-multa</url>
+    </scm>
+    
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/nderwin/exempla-multa/issues</url>
+    </issueManagement>
+    
+    <modules>
+        <module>documentation</module>
+        <module>quarkus</module>
+        <module>javaee</module>
+    </modules>
+      
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>5.0.0</version>
+                    <configuration>
+                        <mapping>
+                            <java>SLASHSTAR_STYLE</java>
+                        </mapping>
+                        <licenseSets>
+                            <licenseSet>
+                                <inlineHeader>Copyright ${project.inceptionYear} ${project.organization.name}</inlineHeader>
+                                <includes>
+                                    <include>**/*.java</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>**/.mvn/**</exclude>
+                                </excludes>
+                            </licenseSet>
+                        </licenseSets>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>format</id>
+                            <phase>process-sources</phase>
+                            <goals>
+                                <goal>format</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>2.27.0</version>
+                    <configuration>
+                        <directories>
+                            <directory>${project.build.sourceDirectory}</directory>
+                            <directory>${project.build.directory}/generated-sources</directory>
+                        </directories>
+                        <lineEnding>LF</lineEnding>
+                        <compilerCompliance>21</compilerCompliance>
+                        <compilerSource>21</compilerSource>
+                        <compilerTargetPlatform>21</compilerTargetPlatform>
+                        <configFile>./java-format.xml</configFile>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

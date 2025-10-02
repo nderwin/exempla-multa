@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>exempla-multa</artifactId>
+        <groupId>com.github.nderwin</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>documentation</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <name>Documentation for Multiple Examples</name>
+
+    <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <executions>
+                    <execution>
+                        <id>html-dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/html.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pdf-dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/pdf.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <attributes>
+                        <author>${project.organization.name}</author>
+                        <docdate>${maven.build.timestamp}</docdate>
+                        <doctime />
+                        <icons>font</icons>
+                        <organization>${project.organization.name}</organization>
+                        <revnumber>${project.version}</revnumber>
+                        <revdate>${maven.build.timestamp}</revdate>
+                    </attributes>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-pdf</artifactId>
+                        <version>2.3.19</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>output-pdf</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <attributes>
+                                <toc></toc>
+                                <pdf-theme>exempla-multa</pdf-theme>
+                                <pdf-themesdir>${project.basedir}/src/main/resources/themes</pdf-themesdir>
+                                <pdf-version>1.7</pdf-version>
+                                <!-- Below 2 lines make the images work in PDFs -->
+                                <imagesoutdir>${project.build.directory}/generated-docs/${project.version}/pdf/images</imagesoutdir>
+                                <imagesdir>${project.build.directory}/generated-docs/${project.version}/pdf/images</imagesdir>
+                            </attributes>
+                            <backend>pdf</backend>
+                            <doctype>book</doctype>
+                            <outputDirectory>${project.build.directory}/generated-docs/${project.version}/pdf</outputDirectory>
+                            <outputFile>${project.build.finalName}.pdf</outputFile>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>output-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <attributes>
+                                <toc>left</toc>
+                                <imagesoutdir>${project.build.directory}/generated-docs/${project.version}/html/images</imagesoutdir>
+                                <imagesdir>${project.build.directory}/generated-docs/${project.version}/html/images</imagesdir>
+                            </attributes>
+                            <backend>html5</backend>
+                            <outputDirectory>${project.build.directory}/generated-docs/${project.version}/html</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,88 @@
+services:
+    postgres:
+        image: postgres:17.4
+        container_name: postgres
+        expose:
+          - "5432"
+        ports:
+          - "5432:5432"
+        volumes:
+          - "/opt/databases/telemetry:/var/lib/postgresql/data"
+          - "./pg-init:/docker-entrypoint-initdb.d"
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U postgres"]
+          interval: 1s
+          timeout: 5s
+          retries: 10
+        environment:
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=postgres
+          
+    keycloak:
+        image: quay.io/keycloak/keycloak:26.2.1
+        container_name: keycloak
+        depends_on:
+          postgres:
+            condition: service_healthy
+        expose:
+          - "8080"
+        ports:
+          - "7070:8080"
+        volumes:
+          - "./exempla-multa-realm.json:/opt/keycloak/data/import/exempla-multa-realm.json"
+        environment:
+          - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+          - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+          - DB_VENDOR=postgres
+          - DB_ADDR=postgres
+          - DB_DATABASE=keycloak
+          - DB_USER=postgres
+          - DB_PASSWORD=postgres
+        command: ["start-dev", "--import-realm"]
+#        command: ["start-dev"]
+
+    rabbitmq:
+        image: rabbitmq:4.1.0
+        container_name: rabbitmq
+        expose:
+          - "1883"
+          - "5671"
+          - "5672"
+          - "8883"
+          - "15671"
+          - "15672"
+          - "15674"
+          - "15675"
+          - "15691"
+          - "15692"
+          - "61613"
+          - "61614"
+        ports:
+          - "1883:1883"
+          - "5671:5671"
+          - "5672:5672"
+          - "8883:8883"
+          - "15671:15671"
+          - "15672:15672"
+          - "15674:15674"
+          - "15675:15675"
+          - "15691:15691"
+          - "15692:15692"
+          - "61613:61613"
+          - "61614:61614"
+        environment:
+          - RABBITMQ_DEFAULT_USER=admin
+          - RABBITMQ_DEFAULT_PASS=admin
+          - CONFIG_FILE=rabbitmq.conf
+
+    # lgtm:
+    #     image: grafana/otel-lgtm:0.7.5
+    #     container_name: grafana
+    #     expose:
+    #       - "3000"
+    #       - "4317"
+    #       - "4318"
+    #     ports:
+    #       - "3000:3000"
+    #       - "4317:4317"
+    #       - "4318:4318"

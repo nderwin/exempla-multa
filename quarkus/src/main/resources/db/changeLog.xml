@@ -1,0 +1,53 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="nde" id="000-init-0">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS demo;
+        </sql>
+        
+        <createSequence schemaName="demo" sequenceName="contact_seq" startValue="1" incrementBy="50" />
+        <createTable schemaName="demo" tableName="contact">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="name" type="varchar(512)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable schemaName="demo" tableName="address">
+            <column name="contactid" type="bigint">
+                <constraints nullable="false" referencedTableSchemaName="demo" referencedTableName="contact" referencedColumnNames="id" foreignKeyName="fk_address_contact" />
+            </column>
+            <column name="position" type="integer" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="deliveryline" type="varchar(64)">
+                <constraints nullable="false" />
+            </column>
+            <column name="city" type="varchar(64)" />
+            <column name="territory" type="varchar(2)" />
+            <column name="postalcode" type="varchar(9)" />
+            <column name="verified" type="boolean" />
+        </createTable>
+
+        <addPrimaryKey schemaName="demo" tableName="address" columnNames="contactid,position" constraintName="pk_address" />
+
+        <rollback>
+            <dropPrimaryKey schemaName="demo" tableName="address" constraintName="pk_address" />
+            
+            <dropTable schemaName="demo" tableName="address" cascadeConstraints="true" />
+            
+            <dropTable schemaName="demo" tableName="contact" cascadeConstraints="true" />
+            
+            <dropSequence schemaName="demo" sequenceName="contact_seq" />
+        </rollback>        
+    </changeSet>
+</databaseChangeLog>

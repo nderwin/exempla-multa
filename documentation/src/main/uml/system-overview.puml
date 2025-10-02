@@ -1,0 +1,25 @@
+@startuml
+
+actor user as "User"
+
+node quark as "Quarkus Application"
+database pg17 as "PostgreSQL 17"
+
+node ActiveMQ {
+    queue t as "VirtualTopic.address-verification"
+    queue q as "Consumer.quarkus.VirtualTopic.address-verification"
+}
+
+node jb as "JBoss AS 6.4"
+database h2 as "h2"
+
+quark -down- pg17
+jb -down- h2
+
+user -right-> quark : create / update address
+quark -right-> jb : request verification
+jb -up-> t : verification result
+t -left-> q
+q -down-> quark
+
+@enduml
