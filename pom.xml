@@ -41,8 +41,8 @@
     
     <modules>
         <module>documentation</module>
-        <module>quarkus</module>
-        <module>javaee</module>
+        <module>telemetry-with-quarkus</module>
+        <module>telemetry-with-javaee</module>
     </modules>
       
     <properties>
