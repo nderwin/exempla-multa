@@ -1,0 +1,162 @@
+@startuml
+!include coad.style
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam linetype ortho
+
+together {
+    class Party<<party>> {
+        serialNumber
+        name
+        address
+        customValue
+        assessAcrossRoles()
+        getCustomElseDefaultValue()
+        listRoles()
+        {static} listParties()
+        {static} assessAcrossParties()
+    }
+    class PartyDescription<<description>> {
+        type
+        description
+        itemNumber
+        defaultValue
+        assessWithPluginElseDefault()
+        assessAcrossParties()
+        findAvailable()
+        calculateQuantityAvailable()
+        calculateTotalFor()
+        listParties()
+        {static} listDescriptions()
+        {static} assessAcrossDescriptions()
+    }
+    class PartyRole<<role>> {
+        assignedNumber
+        status
+        assessAcrossMIs()
+        listMIs()
+        {static} listRoles()
+        {static} assessAcrossRoles()
+    }
+}
+
+together {
+    class Place<<place>> {
+        serialNumber
+        name
+        address
+        customValue
+        assessAcrossRoles()
+        getCustomElseDefaultValue()
+        listRoles()
+        {static} listPlaces()
+        {static} assessAcrossPlaces()
+    }
+    class PlaceDescription<<description>> {
+        type
+        description
+        itemNumber
+        defaultValue
+        assessWithPluginElseDefault()
+        assessAcrossPlaces()
+        findAvailable()
+        calculateQuantityAvailable()
+        calculateTotalFor()
+        listPlaces()
+        {static} listDescriptions()
+        {static} assessAcrossDescriptions()
+    }
+    class PlaceRole<<role>> {
+        assignedNumber
+        status
+        assessAcrossMIs()
+        listMIs()
+        {static} listRoles()
+        {static} assessAcrossRoles()
+    }
+}
+
+together {
+    class Thing<<thing>> {
+        serialNumber
+        name
+        address
+        customValue
+        assessAcrossRoles()
+        getCustomElseDefaultValue()
+        listRoles()
+        {static} listThings()
+        {static} assessAcrossThings()
+    }
+    class ThingDescription<<description>> {
+        type
+        description
+        itemNumber
+        defaultValue
+        assessWithPluginElseDefault()
+        assessAcrossThings()
+        findAvailable()
+        calculateQuantityAvailable()
+        calculateTotalFor()
+        listThings()
+        {static} listDescriptions()
+        {static} assessAcrossDescriptions()
+    }
+    class ThingRole<<role>> {
+        assignedNumber
+        status
+        assessAcrossMIs()
+        listMIs()
+        {static} listRoles()
+        {static} assessAcrossRoles()
+    }
+}
+
+together {
+    class MomentInterval<<moment-interval>> {
+        number
+        dateOrTimeOrInterval
+        priority
+        total
+        status
+        makeMomentInterval()
+        addDetail()
+        calculateTotal()
+        recalculateTotal()
+        complete()
+        cancel()
+        generateNext()
+        assessWRTPrior()
+        assessWRTNext()
+        comparePlanVSActual()
+        {static} listMIs()
+        {static} assessAcrossMIs()
+    }
+    class MomentIntervalDetail<<moment-interval>> {
+        quantity
+        calculateTotal()
+    }
+    class PriorMI<<moment-interval>> {
+    }
+    class NextMI<<moment-interval>> {
+    }
+}
+
+MomentInterval "1" o-down- "1..*" MomentIntervalDetail
+MomentIntervalDetail -[hidden]up- MomentInterval
+MomentInterval "0..*" -left- "1" PriorMI
+MomentInterval "1" -right- "0..*" NextMI
+
+Party "0..*" -right- "1" PartyDescription
+Party "1" -down- "0..1" PartyRole
+PartyRole "1" -down- "0..*" MomentInterval
+
+Place "0..*" -right- "1" PlaceDescription
+Place "1" -down- "0..1" PlaceRole
+PlaceRole "1" -left- "0..*" MomentInterval
+
+Thing "0..*" -right- "1" ThingDescription
+Thing "1" -up- "0..1" ThingRole
+ThingRole "0..*" -up- "0..*" MomentIntervalDetail
+
+@enduml

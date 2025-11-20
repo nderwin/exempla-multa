@@ -1,0 +1,16 @@
+<style>
+    .party,.place,.thing {
+        BackGroundColor: #bbdcba;
+    }
+    .role {
+        BackGroundColor: #eadfbc;
+    }
+    .description {
+        BackGroundColor: #bbc7cf;
+    }
+    .moment-interval {
+        BackGroundColor: #edb5bb;
+    }
+</style>
+
+hide circle

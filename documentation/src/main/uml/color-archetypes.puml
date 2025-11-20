@@ -1,0 +1,49 @@
+@startuml
+!include coad.style
+
+class PartyPlaceThing<<thing>>
+
+class Role<<role>>
+
+class MomentInterval<<moment-interval>>
+
+class Description<<description>>
+
+PartyPlaceThing -right- Description
+PartyPlaceThing -down- Role
+Role -right- MomentInterval
+
+note left of PartyPlaceThing 
+A party (person or 
+organization), 
+place or thing
+end note
+
+note left of Role
+A way of
+participating
+in something
+end note
+
+note right of Description
+A catalog-
+entry-like
+description
+end note
+
+note bottom of MomentInterval
+A moment in time or
+an interval of time that
+you need to track or
+do something about
+end note
+
+legend
+What color is that class?
+- Is it a moment or interval?  It's pink.
+- Is it a role played?  It's yellow.
+- Is it a catalog-entry-like description?  It's blue.
+- Otherwise, it's a party, place, or thing.  It's green.
+end legend
+
+@enduml
