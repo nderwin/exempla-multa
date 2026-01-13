@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-
 @Table(schema = "demo", name = "contact")
 @Entity
 public class Contact extends PanacheEntityBase {

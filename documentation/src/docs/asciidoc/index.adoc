@@ -20,3 +20,19 @@ Java 8 is required for the `telemetry-with-javaee` project.  Java 21 is the mini
 The `telemetry-with-quarkus` and `telemetry-with-javaee` projects demonstrate how Telemetry can be used to show the flow
 of data from one application, through a message broker, to another application.  The traces and spans that are generated
 can illustrate what code is being called at what point in the lifecycle of an application function.
+
+The `telemetry-with-javaee` project produces a WAR file that can be deployed to an application server.  For this
+example, JBoss EAP 6.4 was used.  The startup arguments were modified to add an OpenTelemetry agent:
+
+```
+ -Dotel.javaagent.configuration-file=/opt/jboss/otel.properties -javaagent:/opt/jboss/opentelemetry-javaagent.jar
+```
+
+See more about configuration at https://opentelemetry.io/ and the documentation about the Java Agent for download
+instructions.
+
+An example configuration file would look something like this:
+
+----
+include::example-otel.properties[]
+----

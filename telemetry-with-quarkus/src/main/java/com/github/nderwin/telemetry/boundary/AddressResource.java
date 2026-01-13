@@ -3,12 +3,12 @@
  */
 package com.github.nderwin.telemetry.boundary;
 
-import com.github.nderwin.telemetry.control.ValidationClient;
 import com.github.nderwin.telemetry.control.VerificationRequest;
 import com.github.nderwin.telemetry.entity.Address;
 import com.github.nderwin.telemetry.entity.Contact;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -26,7 +26,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.util.stream.Collectors;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Blocking
 @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -40,8 +39,7 @@ public class AddressResource {
     UriInfo uriInfo;
     
     @Inject
-    @RestClient
-    ValidationClient client;
+    Event<VerificationRequest> verificationRequest;
     
     @GET
     public Response list(
@@ -81,9 +79,9 @@ public class AddressResource {
         );
         
         c.addAddress(a);
-        c.persistAndFlush();
+        c.persist();
         
-        client.validate(new VerificationRequest(
+        verificationRequest.fire(new VerificationRequest(
                 c.getId(),
                 c.getAddresses().indexOf(a),
                 a.getDeliveryLine(),
@@ -149,7 +147,7 @@ public class AddressResource {
             a.setTerritory(address.territory());
             a.setVerified(false);
 
-            client.validate(new VerificationRequest(
+            verificationRequest.fire(new VerificationRequest(
                     c.getId(),
                     id,
                     a.getDeliveryLine(),
