@@ -3,8 +3,11 @@
  */
 package com.github.nderwin.telemetry.control;
 
+import com.rabbitmq.client.BuiltinExchangeType;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -12,14 +15,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
 
 @Stateless
 @LocalBean
@@ -27,11 +22,20 @@ public class ValidationRequestListener {
 
     private static final Logger LOG = Logger.getLogger(ValidationRequestListener.class.getName());
     
-    @Resource(lookup = "java:/jms/activemq/topic/VirtualTopic.address-verification")
-    Topic topic;
+    private static final String EXCHANGE_NAME = "address-verify";
     
-    @Resource(lookup = "java:/ActiveMQConnectionFactory")
+    private static final String ROUTING_KEY = "";
+    
     ConnectionFactory factory;
+
+    public ValidationRequestListener() {
+        factory = new ConnectionFactory();
+        factory.setUsername(System.getProperty("amqp.username"));
+        factory.setPassword(System.getProperty("amqp.password"));
+        factory.setVirtualHost("/");
+        factory.setHost("localhost");
+        factory.setPort(5672);
+    }
     
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @Asynchronous
@@ -39,47 +43,23 @@ public class ValidationRequestListener {
             @Observes(during = TransactionPhase.AFTER_COMPLETION) 
             final ValidationRequest request
     ) {
-        Connection connection = null;
-        Session session = null;
-        MessageProducer producer = null;
-        
-        try {
-            connection = factory.createConnection();
-            session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+        try (Connection connection = factory.newConnection();
+                Channel channel = connection.createChannel()) {
             
-            producer = session.createProducer(topic);
-            producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-            
-            final TextMessage message = session.createTextMessage("{"
+            channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, true);
+            channel.queueDeclare(EXCHANGE_NAME, true, false, false, null).getQueue();
+            channel.queueBind(EXCHANGE_NAME, EXCHANGE_NAME, ROUTING_KEY);
+
+            final String message = "{"
                     + "\"contactId\": " + request.getContactId() + ", "
                     + "\"addressId\": " + request.getPosition() + ", "
                     + "\"verified\": true"
-                    + "}");
-            
-            producer.send(message);
-        } catch (final JMSException ex) {
+                    + "}";
+
+            LOG.info("Sending JMS message");
+            channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY, null, message.getBytes());
+        } catch (final Throwable ex) {
             LOG.severe(ex.getMessage());
-        } finally {
-            if (null != producer) {
-                try {
-                    producer.close();
-                } catch (final JMSException ex) {
-                }
-            }
-            
-            if (null != session) {
-                try {
-                    session.close();
-                } catch (final JMSException ex) {
-                }
-            }
-            
-            if (null != connection) {
-                try {
-                    connection.close();
-                } catch (final JMSException ex) {
-                }
-            }
         }
     }
     

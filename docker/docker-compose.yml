@@ -45,44 +45,33 @@ services:
         image: rabbitmq:4.1.4-management
         container_name: rabbitmq
         expose:
-          - "1883"
           - "5671"
           - "5672"
-          - "8883"
           - "15671"
           - "15672"
-          - "15674"
-          - "15675"
           - "15691"
           - "15692"
-          - "61613"
-          - "61614"
         ports:
-          - "1883:1883"
           - "5671:5671"
           - "5672:5672"
-          - "8883:8883"
           - "15671:15671"
           - "15672:15672"
-          - "15674:15674"
-          - "15675:15675"
           - "15691:15691"
           - "15692:15692"
-          - "61613:61613"
-          - "61614:61614"
         environment:
           - RABBITMQ_DEFAULT_USER=admin
           - RABBITMQ_DEFAULT_PASS=admin
-          - CONFIG_FILE=rabbitmq.conf
+        volumes:
+          - "./rabbitmq_enabled_plugins:/etc/rabbitmq/enabled_plugins"
 
-    # lgtm:
-    #     image: grafana/otel-lgtm:0.7.5
-    #     container_name: grafana
-    #     expose:
-    #       - "3000"
-    #       - "4317"
-    #       - "4318"
-    #     ports:
-    #       - "3000:3000"
-    #       - "4317:4317"
-    #       - "4318:4318"
+    lgtm:
+        image: grafana/otel-lgtm:0.7.5
+        container_name: grafana
+        expose:
+          - "3000"
+          - "4317"
+          - "4318"
+        ports:
+          - "3000:3000"
+          - "4317:4317"
+          - "4318:4318"

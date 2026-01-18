@@ -5,6 +5,8 @@ package com.github.nderwin.telemetry.entity;
 
 import com.github.nderwin.telemetry.control.ValidationClient;
 import com.github.nderwin.telemetry.control.VerificationRequest;
+import io.opentelemetry.api.trace.SpanKind;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.persistence.PostPersist;
@@ -21,7 +23,7 @@ public class ContactEntityListener {
         client = CDI.current().select(ValidationClient.class);
     }
 
-//    @WithSpan(kind = SpanKind.CONSUMER)
+    @WithSpan(kind = SpanKind.CONSUMER)
     @PostPersist
     @PostUpdate
     public void onPersistOrUpdate(final Contact con) {
