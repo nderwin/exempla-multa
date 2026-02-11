@@ -1,0 +1,46 @@
+@startuml
+!include coad.style
+skinparam nodesep 300
+skinparam linetype ortho
+
+together {
+    class Party<<party>> {
+        serialNumber
+        name
+        address
+        customValue
+        assessAcrossRoles()
+        getCustomElseDefaultValue()
+        listRoles()
+        {static} listParties()
+        {static} assessAcrossParties()
+    }
+
+    class Person<<party>> {
+    }
+
+    class Organization<<party>> {
+    }
+
+    class Name<<party-detail>> {
+        registered : Date
+        name : String
+    }
+
+    class NameDetails<<party-detail>> {
+        familyName : String
+        suffix : String
+        prefix : String
+    }
+
+}
+
+Person -up-|> Party
+Organization -up-|> Party
+
+Party "1" *-left- "0..*" Name : {ordered} registered names
+Party "1" *-left- "0..*" Name : aliases, nicknames and common errors
+
+Name "1" -- "0..1" NameDetails
+
+@enduml

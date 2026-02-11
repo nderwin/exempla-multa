@@ -1,5 +1,5 @@
 <style>
-    .party,.place,.thing {
+    .party,.place,.thing,.party-detail {
         BackGroundColor: #bbdcba;
     }
     .role {
