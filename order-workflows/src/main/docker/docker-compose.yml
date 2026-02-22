@@ -1,0 +1,59 @@
+services:
+    postgresql:
+        image: postgres:17.4
+        container_name: temporal-postgresql
+        ports:
+          - "5432:5432"
+        volumes:
+          - "/opt/databases/temporal:/var/lib/postgresql/data"
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U temporal -d temporal"]
+          interval: 5s
+          timeout: 5s
+          retries: 10
+        environment:
+          - POSTGRES_USER=temporal
+          - POSTGRES_PASSWORD=temporal
+          - POSTGRES_DB=temporal
+        networks:
+          - temporal-network
+          
+    temporal:
+        image: temporalio/auto-setup:1.24
+        container_name: temporal-server
+        networks:
+          - temporal-network
+        depends_on:
+          postgresql:
+            condition: service_healthy
+        ports:
+          - "7233:7233"
+          - "8088:8088"
+        environment:
+          - DB=postgres12
+          - DB_PORT=5432
+          - POSTGRES_SEEDS=postgresql
+          - POSTGRES_USER=temporal
+          - POSTGRES_PWD=temporal
+          - DBNAME=temporal
+          - VISIBILITY_DBNAME=temporal_visibility
+          - SKIP_DB_CREATE=false
+          - SKIP_SCHEMA_SETUP=false
+          - SKIP_DEFAULT_NAMESPACE_CREATION=false
+          
+    temporal-ui:
+        image: temporalio/ui:2.24.0
+        container_name: temporal-ui
+        networks:
+          - temporal-network
+        depends_on:
+          - temporal
+        ports:
+          - "8080:8080"
+        environment:
+          - TEMPORAL_ADDRESS=temporal:7233
+          - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+        
+networks:
+    temporal-network:
+        driver: bridge
