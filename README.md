@@ -34,6 +34,7 @@ a REST API
 - [credit-audit](./credit-audit) - using Hibernate Envers for auditing
 - [data-oriented-quarkus](./data-oriented-quarkus) - data is data, operations
 are functions, i.e. Data-Oriented Programming
+- [enterprise-rag](./enterprise-rag) - Ollama, RAG, Docling
 - [error-handling](./error-handling) - using the Problem extension for 
 standardized REST API error responses
 - [event-sourcing-quarkus](./event-sourcing-quarkus) - CQRS, immutable events
