@@ -30,6 +30,7 @@ Quarkus itself or the Quarkiverse.
 
 - [api-adapter](./api-adapter) - using a custom header and date for versioning 
 a REST API
+- [cache-problems](./cache-problems) - combining REST, HTTP Problem, and Redis caching for handling slow and intentional caching of errors
 - [claims-intake](./claims-intake) - reactive messaging with Kafka
 - [credit-audit](./credit-audit) - using Hibernate Envers for auditing
 - [data-oriented-quarkus](./data-oriented-quarkus) - data is data, operations
